@@ -2,8 +2,8 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { Input } from '../components';
 import { Button } from '../components';
 import { useSelector, useDispatch } from "react-redux";
-import { setCountryCode, setPhoneNumber, setSecret } from '../redux/userSlice';
-
+import { setCountryCode, setPhoneNumber, setSecret } from "../redux/userSlice";
+import { useRouter } from "next/router";
 
 export default function Signin() {
   const { data: session } = useSession();
@@ -11,6 +11,7 @@ export default function Signin() {
   const phoneNumber = useSelector(state => state.user.phoneNumber);
   const secret = useSelector(state => state.user.secret);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -41,6 +42,7 @@ export default function Signin() {
       <Input label="Phone number" value={phoneNumber} onChange={(e) => dispatch((setPhoneNumber(e.target.value)))} />
       <Input label="PIN" type="password" value={secret} onChange={(e) => dispatch((setSecret(e.target.value)))} />
       <Button onClick={handleSignIn} label="Sign in" intent="primary" />
-    </>
+      <Button intent="transparent" label="Or sign up" onClick={(e) => {e.preventDefault(); router.push("/signup"); }} />
+   </>
   );
 }

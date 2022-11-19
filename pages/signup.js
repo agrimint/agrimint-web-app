@@ -78,7 +78,7 @@ export default function Signup() {
         // if (data && data.otp) dispatch(setOtp(data.otp));
 
         await signIn("credentials", {
-          redirect: true,
+          redirect: false,
           countryCode,
           phoneNumber,
           secret
@@ -110,6 +110,7 @@ export default function Signup() {
       <Input label="Country code" value={countryCode} onChange={(e) => dispatch((setCountryCode(e.target.value)))} />
       <Input label="Phone number" value={phoneNumber} onChange={(e) => dispatch((setPhoneNumber(e.target.value)))} />
       <Button label="Send verification code" onClick={(e) => requestOtp(e)} />
+      {step === 1 && <Button intent="transparent" label="Or sign in if you already have an account" onClick={(e) => {e.preventDefault(); router.push("/signin"); }} />}
       {step >= 2 && <>
         <p className="pb-5">We have sent a verification code to +{countryCode} {phoneNumber}. Please enter it below.</p>
         <Input label="OTP" value={otp} onChange={(e) => dispatch((setOtp(e.target.value)))} />

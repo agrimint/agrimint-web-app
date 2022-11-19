@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { Button } from '../components';
-import { useRouter } from 'next/router';
+import { Button } from "../components";
+import { useRouter } from "next/router";
 
 // TODO: Check if the user is already logged in, and move them to the right step if onboarding or to the dashboard if onboarded
 // TODO: Explainer screens + Let's get started screen
