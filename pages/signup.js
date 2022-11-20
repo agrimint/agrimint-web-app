@@ -3,19 +3,23 @@ import { Button } from "../components";
 // import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { nextStep, previousStep } from "../redux/onboardingSlice";
-import { setName, setCountryCode, setPhoneNumber, setOtp, setSecret, setSecret2 } from "../redux/userSlice";
+import { setName, setCountryCode, setPhoneNumber, setOtp } from "../redux/userSlice";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
-// TODO: Simple 
 export default function Signup() {
   const step = useSelector(state => state.onboarding.step);
   const name = useSelector(state => state.user.name);
   const countryCode = useSelector(state => state.user.countryCode);
   const phoneNumber = useSelector(state => state.user.phoneNumber);
   const otp = useSelector(state => state.user.otp);
-  const secret = useSelector(state => state.user.secret);
-  const secret2 = useSelector(state => state.user.secret2);
+  const [secret, setSecret] = useState();
+  const [secret2, setSecret2] = useState();
+  // const secret = useSelector(state => state.user.secret);
+  // const secret2 = useSelector(state => state.user.secret2);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const requestOtp = async (e) => {
     try {
@@ -102,14 +106,15 @@ export default function Signup() {
     });
   }
 
+  // TODO: Improve step management & display progress
   return (
     step < 4 ? <>
-      <h1 className="text-3xl font-bold pb-5">Create account</h1>
-      <p className="pb-5">Please enter your name and phone number, so that other guardians and members will know who you are.</p>
+      <h1 className="text-3xl text-center font-bold py-5">Create account</h1>
+      <p className="pb-5 text-center">Please enter your name and phone number, so that other guardians and members will know who you are.</p>
       <Input label="Name" value={name} onChange={(e) => dispatch((setName(e.target.value)))} />
       <Input label="Country code" value={countryCode} onChange={(e) => dispatch((setCountryCode(e.target.value)))} />
       <Input label="Phone number" value={phoneNumber} onChange={(e) => dispatch((setPhoneNumber(e.target.value)))} />
-      <Button label="Send verification code" onClick={(e) => requestOtp(e)} />
+      <Button label="Send verification code" disabled={(name === '') || (countryCode === '') || (phoneNumber === '') ? true : false} onClick={(e) => requestOtp(e)} />
       {step === 1 && <Button intent="transparent" label="Or sign in if you already have an account" onClick={(e) => {e.preventDefault(); router.push("/signin"); }} />}
       {step >= 2 && <>
         <p className="pb-5">We have sent a verification code to +{countryCode} {phoneNumber}. Please enter it below.</p>
@@ -117,16 +122,18 @@ export default function Signup() {
         {step === 2 && <Button intent="transparent" label="Didn't receive the code?" onClick={(e) => { dispatch(previousStep()); requestOtp(e); }} />}
         <Button label="Continue" onClick={(e) => dispatch(nextStep())} disabled={(otp === '') ? true : false} />
         {step >= 3 && <>
-          <Input label="Choose PIN" type="password" value={secret} onChange={(e) => dispatch((setSecret(e.target.value)))} />
-          <Input label="Reenter PIN" type="password" value={secret2} onChange={(e) => dispatch((setSecret2(e.target.value)))} />
+          <Input label="Choose PIN" type="password" value={secret} onChange={(e) => setSecret(e.target.value)} />
+          <Input label="Reenter PIN" type="password" value={secret2} onChange={(e) => setSecret2(e.target.value)} />
           <Button label="Sign up" onClick={(e) => signUp(e)} disabled={(otp === '') || (secret === '') || (secret !== secret2) ? true : false} />
         </>}
       </>}
     </> : <>
-      <h1 className="text-3xl font-bold pb-5">Account created</h1>
-      <p className="pb-5">{name}, welcome to AgriMint! You can now create a new mint or join an existing one if you are invited.</p>
-      <Button label="Create a new mint" />
-      <Button intent="secondary" label="Join a mint" />
+      <h1 className="text-3xl text-center font-bold py-5">Account created</h1>
+      <p className="text-center pb-5">{name}, welcome to AgriMint! You can now create a new mint or join an existing one if you are invited.</p>
+      <div className="mt-auto pb-10">
+        <Button label="Create a new mint" />
+        <Button intent="secondary" label="Join a mint" />
+      </div>
     </>
   );
 }

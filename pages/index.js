@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from "../components";
 import { useRouter } from "next/router";
 
@@ -9,11 +10,14 @@ export default function Home() {
 
   return (
     <>
-      <h1 className="text-3xl font-bold pb-5">Welcome to AgriMint!</h1>
-      <p className="pb-5">AgriMint enables you to create a mint – your community-owned bank where you can securely save money, pay, borrow and protect against surprising events, together with other members.</p>
+      <Image src="/agrimint-logo-vector.svg" alt="AgriMint logo" width="10" height="10" className="w-20 h-20 mx-auto my-10" />
+      <h1 className="text-3xl font-bold py-5 text-center">Welcome to AgriMint!</h1>
+      <p className="pb-5 text-center">AgriMint enables you to create a mint – your community-owned bank where you can securely save money, pay, borrow and protect against surprising events, together with other members.</p>
       {/* <Link href="/signup">Get started</Link>*/}
-      <Button label="Get started" onClick={(e) => {e.preventDefault(); router.push("/signup"); }} />
-      <Button intent="transparent" label="Or sign in if you already have an account" onClick={(e) => {e.preventDefault(); router.push("/signin"); }} />
+      <div className="mt-auto pb-10">
+        <Button label="Get started" onClick={(e) => {e.preventDefault(); router.push("/signup"); }} />
+        <Button intent="transparent" label="Or sign in if you already have an account" onClick={(e) => {e.preventDefault(); router.push("/signin"); }} />
+      </div>
     </>
   )
 }

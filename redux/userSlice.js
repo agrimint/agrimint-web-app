@@ -5,8 +5,8 @@ const initialState = {
   countryCode: '',
   phoneNumber: '',
   otp: '',
-  secret: '',
-  secret2: '',
+  // secret: '',
+  // secret2: '',
 };
 
 export const userSlice = createSlice({
@@ -25,12 +25,12 @@ export const userSlice = createSlice({
     setOtp: (state, action) => {
       state.otp = action.payload;
     },
-    setSecret: (state, action) => {
-      state.secret = action.payload;
-    },
-    setSecret2: (state, action) => {
-      state.secret2 = action.payload;
-    },
+    // setSecret: (state, action) => {
+    //   state.secret = action.payload;
+    // },
+    // setSecret2: (state, action) => {
+    //   state.secret2 = action.payload;
+    // },
     signIn: (state, action) => {
       // TODO:
       state.name = action.payload.name;
@@ -44,8 +44,8 @@ export const {
   setCountryCode,
   setPhoneNumber,
   setOtp,
-  setSecret,
-  setSecret2,
+  // setSecret,
+  // setSecret2,
   signIn
 } = userSlice.actions;
 
