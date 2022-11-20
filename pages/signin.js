@@ -3,14 +3,16 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { Input } from '../components';
 import { Button } from '../components';
 import { useSelector, useDispatch } from "react-redux";
-import { setCountryCode, setPhoneNumber } from "../redux/userSlice";
+import { setCountryCode, setPhoneNumber, signInUser, signOutUser } from "../redux/userSlice";
 import { useRouter } from "next/router";
 
 export default function Signin() {
   const { data: session } = useSession();
+  const userName = useSelector(state => state.user.name);
   const countryCode = useSelector(state => state.user.countryCode);
   const phoneNumber = useSelector(state => state.user.phoneNumber);
-  const [secret, setSecret] = useState();
+  const signedIn = useSelector(state => state.user.signedIn);
+  const [secret, setSecret] = useState("");
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -24,15 +26,23 @@ export default function Signin() {
     });
   }
 
-  console.log("SESSION", session);
+  if (!signedIn && session) {
+    console.log("Authenticated, SESSION =", session);
+    dispatch(signInUser(session.user));
+  }
+
+  if (signedIn && !session) {
+    console.log("Not authenticated, clean up store");
+    dispatch(signOutUser());
+  }
 
   if (session) {
     return (
       <>
         <h1 className="text-3xl text-center font-bold py-5">User profile</h1>
-        <p className="pb-5 text-center">Signed in as {session.user.name}</p>
+        <p className="pb-5 text-center">Signed in as {userName}</p>
         <div className="mt-auto pb-5">
-          <Button onClick={() => signOut()} label="Sign out" intent="primary" />
+          <Button onClick={() => { signOut(); }} label="Sign out" intent="primary" />
         </div>
       </>
     );
@@ -46,7 +56,7 @@ export default function Signin() {
       <Input label="PIN" type="password" value={secret} onChange={(e) => setSecret(e.target.value)} />
       <div className="mt-auto pb-5">
         <Button onClick={handleSignIn} label="Sign in" intent="primary" />
-        <Button intent="transparent" label="Or sign up" onClick={(e) => {e.preventDefault(); router.push("/signup"); }} />
+        <Button intent="transparent" label="Or sign up" onClick={(e) => {e.preventDefault(); router.push("/onboarding/signup"); }} />
       </div>
    </>
   );
