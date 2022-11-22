@@ -1,7 +1,7 @@
 const onboardingFlow = [
   {
     "step": 1,
-    "stepName": "Create account 1",
+    "stepName": "Create account - phone number",
     "stepUrl": "/onboarding/signup",
     "canGoBack": true,
     "goBackToUrl": "/",
@@ -9,7 +9,7 @@ const onboardingFlow = [
   },
   {
     "step": 2,
-    "stepName": "Create account 2",
+    "stepName": "Create account - OTP",
     "stepUrl": "/onboarding/signup",
     "canGoBack": true,
     "goBackToUrl": "/",
@@ -17,7 +17,7 @@ const onboardingFlow = [
   },
   {
     "step": 3,
-    "stepName": "Create account 3",
+    "stepName": "Create account - set PIN",
     "stepUrl": "/onboarding/signup",
     "canGoBack": true,
     "goBackToUrl": "/",
@@ -25,10 +25,11 @@ const onboardingFlow = [
   },
   {
     "step": 4,
-    "stepName": "",
+    "stepName": "Account created",
     "stepUrl": "/onboarding/signup",
-    "canGoBack": true,
-    "goBackUrl": "/"
+    "canGoBack": false,
+    "goBackUrl": "",
+    "goBackToStep": 4
   },
 
 ]
