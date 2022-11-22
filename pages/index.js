@@ -2,11 +2,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from "../components";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 // TODO: Check if the user is already logged in, and move them to the right step if onboarding or to the dashboard if onboarded
 // TODO: Explainer screens + Let's get started screen
 export default function Home() {
   const router = useRouter();
+  const { data: session } = useSession();
+
+  if (session) router.push("/dashboard");
 
   return (
     <>

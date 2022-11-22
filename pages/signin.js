@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
-import { Input } from '../components';
-import { Button } from '../components';
+import { useState, useEffect } from "react";
+import { useSession, signIn } from "next-auth/react";
+import { Input, Button } from '../components';
 import { useSelector, useDispatch } from "react-redux";
-import { setCountryCode, setPhoneNumber, signInUser, signOutUser } from "../redux/userSlice";
+import { setCountryCode, setPhoneNumber, signInUser } from "../redux/userSlice";
 import { useRouter } from "next/router";
+import { fetchUserData, handleSignOut } from "../util/users";
 
 export default function Signin() {
   const { data: session } = useSession();
@@ -15,26 +15,41 @@ export default function Signin() {
   const [secret, setSecret] = useState("");
   const dispatch = useDispatch();
   const router = useRouter();
+  const [signInError, setSignInError] = useState(false);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    await signIn("credentials", {
-      redirect: true,
+    let result = await signIn("credentials", {
+      redirect: false,
       countryCode,
       phoneNumber,
       secret
     });
+    if (result.ok) {
+      // Authentication successful
+      // TODO: Redirect
+    } else {
+      // Authentication failed
+      setSignInError(true);
+    }
   }
 
-  if (!signedIn && session) {
-    console.log("Authenticated, SESSION =", session);
-    dispatch(signInUser(session.user));
-  }
+  useEffect(() => {
+    if (!signedIn && session) {
+      console.log("Authenticated, SESSION =", session);
+      dispatch(signInUser(session.user));
+    }
 
-  if (signedIn && !session) {
-    console.log("Not authenticated, clean up store");
-    dispatch(signOutUser());
-  }
+    if (signedIn && session) {
+      fetchUserData(dispatch, session.user.accessToken);
+    }
+    // if (signedIn && !session) {
+    //   console.log("Not authenticated, clean up store");
+    //   dispatch(signOutUser());
+    //   dispatch(clearOnboardingData());
+    // }  
+  }, [signedIn, session, dispatch]);
+
 
   if (session) {
     return (
@@ -42,7 +57,7 @@ export default function Signin() {
         <h1 className="text-3xl text-center font-bold py-5">User profile</h1>
         <p className="pb-5 text-center">Signed in as {userName}</p>
         <div className="mt-auto pb-5">
-          <Button onClick={() => { signOut(); }} label="Sign out" intent="primary" />
+          <Button onClick={(e) => { e.preventDefault(); handleSignOut(dispatch); }} label="Sign out" intent="primary" />
         </div>
       </>
     );
@@ -54,6 +69,9 @@ export default function Signin() {
       <Input label="Country code" value={countryCode} onChange={(e) => dispatch((setCountryCode(e.target.value)))} />
       <Input label="Phone number" value={phoneNumber} onChange={(e) => dispatch((setPhoneNumber(e.target.value)))} />
       <Input label="PIN" type="password" value={secret} onChange={(e) => setSecret(e.target.value)} />
+      {signInError && <div className="rounded-[6px] p-2 bg-red-200">
+        <p className="text-center text-red-900">Error signing in. Please provide correct credentials.</p>
+      </div>}
       <div className="mt-auto pb-5">
         <Button onClick={handleSignIn} label="Sign in" intent="primary" />
         <Button intent="transparent" label="Or sign up" onClick={(e) => {e.preventDefault(); router.push("/onboarding/signup"); }} />

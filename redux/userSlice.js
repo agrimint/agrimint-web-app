@@ -1,19 +1,19 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  name: '',
-  countryCode: '',
-  phoneNumber: '',
+  name: "",
+  countryCode: "",
+  phoneNumber: "",
   signedIn: false,
+  federations: [],
 };
 
 export const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     setName: (state, action) => {
       state.name = action.payload;
-      console.log('REDUX setName')
     },
     setCountryCode: (state, action) => {
       state.countryCode = action.payload;
@@ -24,15 +24,16 @@ export const userSlice = createSlice({
     signInUser: (state, action) => {
       state.name = action.payload.name;
       state.signedIn = true; 
-      console.log('REDUX signInUser')
     },
     signOutUser: (state) => {
-      state.name = '';
-      state.countryCode = '';
-      state.phoneNumber = '';
+      state.name = "";
+      state.countryCode = "";
+      state.phoneNumber = "";
       state.signedIn = false;
-      console.log('REDUX signOutUser')
     },
+    setFederations: (state, action) => {
+      state.federations = action.payload;
+    }
   }
 
 });
@@ -43,6 +44,7 @@ export const {
   setPhoneNumber,
   signInUser,
   signOutUser,
+  setFederations,
 } = userSlice.actions;
 
 export default userSlice.reducer;

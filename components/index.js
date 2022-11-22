@@ -1,4 +1,7 @@
 export { default as PageHead } from "./PageHead/PageHead";
 export { default as Layout } from "./Layout/Layout";
+export { default as OnboardingHeader } from "./OnboardingHeader/OnboardingHeader";
+
 export { default as Button } from "./Button/Button";
+export { default as IconButton } from "./IconButton/IconButton";
 export { default as Input } from "./Input/Input";

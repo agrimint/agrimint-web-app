@@ -3,7 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import jwt from "jsonwebtoken";
 
 const decodeJwt = async (token) => {
-  // TODO: We should have a shared secret
   const decodedToken = jwt.decode(token, { algorithms: ['HS512']});
   return decodedToken;
 }
@@ -36,7 +35,12 @@ export default NextAuth({
           }
           console.log(decodedToken);
           if (decodedToken) {
-            return decodedToken.user;
+            let userObject = {
+              name: decodedToken.user.name,
+              data: user
+            }
+            console.log('userObject', userObject);
+            return userObject;
           } else {
             // Something's wrong with the decoding, error
             return null;
@@ -48,13 +52,25 @@ export default NextAuth({
       }
     })
   ],
+  pages: {
+    signIn: '/signin',
+  },
   callbacks: {
     async session({ session, user, token }) {
-      session.accessToken = token.accessToken;
+      session.user.accessToken = token.accessToken;
+      session.user.refreshToken = token.refreshToken;
+
       return session;
     },
-  },
-  session: {
-    jwt: true,
+    async jwt({ token, user, account, profile }) {
+      if (user) {
+        return {
+          ...token,
+          accessToken: user.data.accessToken,
+          refreshToken: user.data.refreshToken,
+        };
+      }
+      return token;
+    }  
   },
 });
