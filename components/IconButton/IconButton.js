@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const icons = [
   {
     "iconName": "x", 
@@ -25,7 +27,7 @@ const IconButton = ({
         onClick,
         disabled,
       }}
-    ><img src={`data:image/svg+xml;utf8,${iconSvg}`} alt="Icon" />
+    ><Image src={`data:image/svg+xml;utf8,${iconSvg}`} width={24} height={24} alt="Icon" />
     </button>
   );
 };

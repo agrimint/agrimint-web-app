@@ -4,7 +4,7 @@ import { cva } from "class-variance-authority";
 const buttonStyles = cva(`
   inline-block 
   px-6 py-2.5 
-  mb-5
+  my-2
   bg-teal-600
   text-white font-medium text-base leading-tight 
   rounded-[6px]

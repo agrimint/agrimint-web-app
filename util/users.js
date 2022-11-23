@@ -1,9 +1,9 @@
-import { signOut } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import { clearOnboardingData } from "../redux/onboardingSlice";
-import { signOutUser, setFederations } from "../redux/userSlice";
+import { clearUserData, setCountryCode, setFederations, setPhoneNumber, setUserSignedIn } from "../redux/userSlice";
 
 // User utilities
-export const requestOtp = async (name, countryCode, phoneNumber) => {
+export const requestOtp = async (name, countryCode, phoneNumber, setError) => {
   try {
     console.log("requestOtp", name, countryCode, phoneNumber);
 
@@ -23,21 +23,52 @@ export const requestOtp = async (name, countryCode, phoneNumber) => {
     };
 
     const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "otp/request", options);
-  
-    if (res) {
+
+    if (res && res.status === 409) {
+      setError("There is an existing account already registered for this phone number. Please sign in.");
+
+    } else if (res && res.status === 200) {
       let data = await res.json();
       if (data && data.otp) {
+        setError("");
         return data.otp;
       }
     }
-  }
-  catch (e) {
+  } catch (e) {
     console.error("requestOtp error", e);
+    setError("An error has occurred. Please try again.")
     return null;
   }
 };
 
-export const signUp = async (name, countryCode, phoneNumber, secret, otp, signIn) => {
+
+export const signInUser = async (dispatch, countryCode, phoneNumber, secret, setError) => {
+  console.log("signInUser");
+  try {
+    let result = await signIn("credentials", {
+      redirect: false,
+      countryCode,
+      phoneNumber,
+      secret
+    });
+    if (result.ok) {
+      dispatch(setCountryCode(countryCode));
+      dispatch(setPhoneNumber(phoneNumber));
+      return true;
+    } else {
+      setError("The phone number or PIN code you have provided are not correct.")
+      console.error(result.error)
+      return false;
+    }
+  } catch (e) {
+    console.error(e);
+    setError("An error has occurred. Please try again.")
+    return false;
+  }
+}
+
+
+export const signUpUser = async (dispatch, name, countryCode, phoneNumber, secret, otp, signIn, setError) => {
   try {
     const options = {
       method: "POST",
@@ -57,25 +88,23 @@ export const signUp = async (name, countryCode, phoneNumber, secret, otp, signIn
     const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "user", options);
   
     if (res.status === 201) {
-      await signIn("credentials", {
-        redirect: false,
-        countryCode,
-        phoneNumber,
-        secret
-      });
+      setError("");
+      
+      if (signInUser(dispatch, countryCode, phoneNumber, secret, setError)) return true;
+      else return false;
 
-      return true;
     } else {
+      setError("Could not create a user. Please try again.");
       return false;
     }
-  }
-  catch (e) {
+  } catch (e) {
     console.error("signUp error", e);
+    setError("An error occurred. Please try again.");
     return false;
   }
 };
 
-export const fetchUserData = async (dispatch, accessToken) => {
+export const fetchUserData = async (dispatch, accessToken, setError) => {
   try {
     let federations;
 
@@ -87,6 +116,8 @@ export const fetchUserData = async (dispatch, accessToken) => {
       headers: new Headers({
         "Authorization": `Bearer ${accessToken}`,
         "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "http://localhost:4000", // TODO: fix
+        "Access-Control-Allow-Credentials": "true"
       }),
     };
     const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "federations", requestOptions);
@@ -104,12 +135,13 @@ export const fetchUserData = async (dispatch, accessToken) => {
     }
   } catch (e) {
     // TODO: Proper error handling
+    setError("An error occurred. Please try again later.")
     console.error("fetchUserData error", e);
   }
 }
 
-export const handleSignOut = async (dispatch) => {
-  await dispatch(signOutUser());
+export const signOutUser = async (dispatch) => {
+  await dispatch(clearUserData());
   await dispatch(clearOnboardingData());
-  await signOut();
+  await signOut({ redirect: false });
 }

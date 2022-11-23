@@ -1,7 +1,7 @@
 // import { useState } from "react";
 import { cva } from "class-variance-authority";
 
-const inputGroupStyles = "mb-5";
+const inputGroupStyles = "my-2";
 
 const inputLabelStyles = "form-label mb-2 text-gray-700";
 

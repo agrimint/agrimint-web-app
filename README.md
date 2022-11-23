@@ -14,15 +14,17 @@ This web application provides a user-friendly access of Guardians and Members to
 - Creating a new federation and inviting other Guardians.
 - Accepting an invitation as a Guardian to complete the initial federation setup.
 - Inviting other Members.
-- Dashboard with overview of the personal balances in sats and US dollars (using an integration with [Stablesats](https://stablesats.com/))
-- Deposits from Bitcoin & Lightning.
-- Payments to other Members and over Lightning.
+- Dashboard with overview of the personal balances in sats
+- Depositing by paying a Lightning invoice.
+- Payments to other Members
+- Payments of Lightning invoices.
 
 The app is built using Next.js and React.
 
 ## Roadmap
 
 The following features are part of the roadmap:
+- Support for US dollars using an integration with [Stablesats](https://stablesats.com/).
 - Lending to other members.
 - Building a credit record and borrowing with fair conditions from external lenders, using an integration with the [Growr protocol](https://growr.xyz/protocol).
 - Securely storing long-term savings into a multisig vault, protected by hardware signing devices.

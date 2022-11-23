@@ -1,21 +1,21 @@
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { previousStep } from "../../redux/onboardingSlice";
+import { previousStep, onboardingFlow } from "../../redux/onboardingSlice";
 import { IconButton } from "..";
+import { useRouter } from "next/router";
 
 const OnboardingHeader = () => {
   const step = useSelector(state => state.onboarding.step);
   const lastStep = useSelector(state => state.onboarding.lastStep);
   const dispatch = useDispatch();
   
-  // TODO: Some logic about when we can go back
-  let canGoBack = false;
-  if (step < 3) canGoBack = true;
-  if (step === 4) canGoBack = true;
-
   const handleBackClick = async (e) => {
     e.preventDefault();
-    // TODO:
+    dispatch(previousStep());
   }
+
+  const canGoBack = onboardingFlow[step].canGoBack;
+  console.log("Onboarding header - step, canGoBack", step, canGoBack);
 
   return (
     <div className="flex flex-row py-4">

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { nextStep, setInvitationCode } from "../../redux/onboardingSlice";
 import { useRouter } from "next/router";
 
-export default function SetupMint() {
+export default function JoinMint() {
   // const step = useSelector(state => state.onboarding.step);
   const mintName = useSelector(state => state.onboarding.mintName);
   const mintLocation = useSelector(state => state.onboarding.mintLocation);

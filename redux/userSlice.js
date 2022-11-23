@@ -21,15 +21,13 @@ export const userSlice = createSlice({
     setPhoneNumber: (state, action) => {
       state.phoneNumber = action.payload;
     },
-    signInUser: (state, action) => {
-      state.name = action.payload.name;
+    setUserSignedIn: (state, action) => {
+      state.name = action.payload;
       state.signedIn = true; 
     },
-    signOutUser: (state) => {
-      state.name = "";
-      state.countryCode = "";
-      state.phoneNumber = "";
-      state.signedIn = false;
+    clearUserData: (state) => {
+      state = initialState;
+      console.log("Cleared user data");
     },
     setFederations: (state, action) => {
       state.federations = action.payload;
@@ -42,8 +40,8 @@ export const {
   setName,
   setCountryCode,
   setPhoneNumber,
-  signInUser,
-  signOutUser,
+  setUserSignedIn,
+  clearUserData,
   setFederations,
 } = userSlice.actions;
 

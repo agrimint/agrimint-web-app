@@ -1,15 +1,21 @@
 import { Input, Button } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
+import { inviteGuardian } from "../../util/mints";
 import { setMintName, setMintLocation, setGuardianName, setGuardianCountryCode, setGuardianPhoneNumber } from "../../redux/onboardingSlice";
 
-export default function SetupMint() {
+export default function InviteGuardians() {
   // const step = useSelector(state => state.onboarding.step);
   const guardians = useSelector(state => state.onboarding.guardians);
   const dispatch = useDispatch();
+  const { data: session } = useSession();
 
   const sendInvites = async (e) => {
     // TODO:
-    dispatch(nextStep());
+    for (let i = 1; i < guardians.length; i++) {
+      console.log('Guardian', guardians[i].phoneNumber);
+      inviteGuardian(dispatch, session.user.accessToken, )
+    }
+    // dispatch(nextStep());
   }
 
   return(

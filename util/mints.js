@@ -19,10 +19,9 @@ export const createFederation = async (dispatch, accessToken, mintName) => {
     };
     const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "federation", requestOptions);
     
-    // TODO: Check res code
     if (res && res.status === 201) {
       let federation = await res.json();
-      console.log("FEDERATION CREATED", federation)
+      console.log("FEDERATION CREATED", federation);
       
       // TODO: Add federation to the end of the array to support multiple federations
       dispatch(setFederations([federation]));
@@ -32,7 +31,45 @@ export const createFederation = async (dispatch, accessToken, mintName) => {
 
   } catch (e) {
     // TODO: Proper error handling
-    console.error("createMint error", e);
+    console.error("createFederation error", e);
     return false;
   }
 }
+
+
+export const inviteGuardian = async (dispatch, accessToken, federationId, index, countryCode, phoneNumber) => {
+  try {
+    // Invite a guardian
+    var requestOptions = {
+      method: "POST",
+      cache: "no-cache",
+      credentials: "include",
+      headers: new Headers({
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      }),
+      body: JSON.stringify({
+        "phoneNumber": phoneNumber,
+        "countryCode": countryCode,
+        "federationId": invite
+      })
+    };
+    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "invite", requestOptions);
+    
+    // TODO: Check res code
+    if (res && res.status === 201) {
+      // let federation = await res.json();
+      console.log("GUARDIAN INVITED");
+      
+      dispatch(setGuardianInvited(index));
+
+      return true;
+    } else return false;
+
+  } catch (e) {
+    // TODO: Proper error handling
+    console.error("inviteGuardian error", e);
+    return false;
+  }
+}
+
