@@ -8,13 +8,12 @@ const inputLabelStyles = "form-label mb-2 text-gray-700";
 const inputStyles = cva(`
   form-control
   block
-  px-3 py-1.5
+  px-[10px] py-[8px]
   text-base font-normal text-gray-700
   bg-white bg-clip-padding
-  border-2 border-solid border-gray-300 rounded-[6px]
+  border border-solid border-gray-300 rounded-[6px]
   transition ease-in-out
-  m-0
-  focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none`, 
+  focus:border-[2px] focus:px-[9px] focus:py-[7px] focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none`, 
   {
     variants: {
       disabled: {

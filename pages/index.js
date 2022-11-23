@@ -15,11 +15,9 @@ export default function Home() {
 
   useEffect(() => {
     // TODO: Check if the user is already logged in, and move them to the right step if onboarding or to the dashboard if onboarded
-    if (session) router.push("/dashboard");
-
+    // if (session) router.push("/signin");
     // If onboarding has started, push to signup
     if (step >= 1) router.push("/onboarding/signup");
-
   }, [session, router, step]);
   
   const handleSignUp = async (e) => {

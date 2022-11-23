@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import jwt from "jsonwebtoken";
+import { decode } from "next-auth/jwt";
 
 const decodeJwt = async (token) => {
   const decodedToken = jwt.decode(token, { algorithms: ['HS512']});
@@ -26,19 +27,22 @@ export default NextAuth({
   
         if (user) {
           // The API returns the accessToken, we need to decode the user details
+          console.log("User:", user);
           let decodedToken;
           try {
             decodedToken = await decodeJwt(user.accessToken);
-          }
-          catch (err) {
+          } catch (err) {
             console.log('ERROR', err);
           }
-          console.log(decodedToken);
+          console.log("Decoded token:", decodedToken);
           if (decodedToken) {
             let userObject = {
               name: decodedToken.user.name,
-              data: user
-            }
+              data: {...user,
+                countryCode: decodedToken.user.countryCode,
+                phoneNumber: decodedToken.user.phoneNumber
+              }
+            };
             console.log('userObject', userObject);
             return userObject;
           } else {
@@ -57,6 +61,8 @@ export default NextAuth({
   },
   callbacks: {
     async session({ session, user, token }) {
+      session.user.countryCode = token.countryCode;
+      session.user.phoneNumber = token.phoneNumber;
       session.user.accessToken = token.accessToken;
       session.user.refreshToken = token.refreshToken;
 
@@ -66,6 +72,8 @@ export default NextAuth({
       if (user) {
         return {
           ...token,
+          countryCode: user.data.countryCode,
+          phoneNumber: user.data.phoneNumber,
           accessToken: user.data.accessToken,
           refreshToken: user.data.refreshToken,
         };

@@ -7,3 +7,4 @@ export { default as IconButton } from "./IconButton/IconButton";
 export { default as Input } from "./Input/Input";
 export { default as Loader } from "./Loader/Loader";
 export { default as Error } from "./Error/Error";
+export { default as Info } from "./Info/Info";

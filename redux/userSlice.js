@@ -5,6 +5,7 @@ const initialState = {
   countryCode: "",
   phoneNumber: "",
   signedIn: false,
+  userDataFetched: false,
   federations: [],
 };
 
@@ -22,16 +23,25 @@ export const userSlice = createSlice({
       state.phoneNumber = action.payload;
     },
     setUserSignedIn: (state, action) => {
-      state.name = action.payload;
+      state.name = action.payload.name;
+      state.countryCode = action.payload.countryCode;
+      state.phoneNumber = action.payload.phoneNumber;
       state.signedIn = true; 
     },
     clearUserData: (state) => {
-      state = initialState;
       console.log("Cleared user data");
+      window.localStorage.removeItem("persist:root");
+      return initialState;
+    },
+    setUserDataFetched: (state, action) => {
+      state.userDataFetched = action.payload;
     },
     setFederations: (state, action) => {
       state.federations = action.payload;
-    }
+    },
+    setGuardians: (state, action) => {
+      state.federations[action.payload.index].guardians = action.payload.guardians;
+    },
   }
 
 });
@@ -41,8 +51,10 @@ export const {
   setCountryCode,
   setPhoneNumber,
   setUserSignedIn,
+  setUserDataFetched,
   clearUserData,
   setFederations,
+  setGuardians,
 } = userSlice.actions;
 
 export default userSlice.reducer;

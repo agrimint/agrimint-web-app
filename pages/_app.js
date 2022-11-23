@@ -25,7 +25,7 @@ function App({
           <SessionProvider session={session}>
             <PageHead />
             <Layout>
-              {router.pathname.startsWith('/onboarding/') && <OnboardingHeader />}
+              {router.pathname.startsWith('/onboarding') && <OnboardingHeader />}
               <Component {...pageProps} />
             </Layout>
           </SessionProvider>

@@ -1,15 +1,15 @@
-import { Input, Button, Error, Loader } from "../../components";
+import { Input, Button, Error, Loader } from "/components";
 import { useSelector, useDispatch } from "react-redux";
-import { nextStep, setNewUserName, setNewUserCountryCode, setNewUserPhoneNumber, setNewUserOtp } from "../../redux/onboardingSlice";
-import { setUserSignedIn } from "../../redux/userSlice";
+import { onboardingFlow, nextStep, setNewUserName, setNewUserCountryCode, setNewUserPhoneNumber, setNewUserOtp } from "/redux/onboardingSlice";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { requestOtp, signUpUser } from '../../util/users';
+import { requestOtp, signUpUser, handleUserProgress } from '/util/users';
 
 export default function Signup() {
+  const onboardingState = useSelector(state => state.onboarding);
   const step = useSelector(state => state.onboarding.step);
-  const goBackHome = useSelector(state => state.onboarding.goBackHome);
+  const userDataFetched = useSelector(state => state.user.userDataFetched);
   const signedIn = useSelector(state => state.user.signedIn);
   const name = useSelector(state => state.onboarding.newUser.name);
   const countryCode = useSelector(state => state.onboarding.newUser.countryCode);
@@ -24,16 +24,21 @@ export default function Signup() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // After the successful sign up & sign in
-    if (session && !signedIn) {
-      dispatch(setUserSignedIn(session.user.name));
-      dispatch(nextStep());
-      router.push("/onboarding/");
-    }
+    handleUserProgress(dispatch, router, session, status, signedIn, userDataFetched, onboardingFlow, onboardingState, step, setError);
+
+    // // After the successful sign up & sign in
+    // if (session && !signedIn) {
+    //   dispatch(setUserSignedIn(session.user.name));
+    //   dispatch(nextStep());
+    // }
+
+    // if (session && signedIn) {
+    //   router.push("/onboarding/");
+    // }
 
     if (step === 0) router.push("/"); 
-    if (step > 3) router.push("/onboarding");
-  }, [step, signedIn, session, router, dispatch]);
+    // if (step > 3) router.push("/onboarding");
+  }, [step, signedIn, session, status, userDataFetched]);
 
   const handleRequestOtp = async (e, moveToNextStep = true) => {
     e.preventDefault();
@@ -49,7 +54,6 @@ export default function Signup() {
     await signUpUser(dispatch, name, countryCode, phoneNumber, secret, otp, signIn, setError);
   }
 
-  // TODO: Improve step management & display progress
   if (step === 1) {
     return (<>
       {(status === "loading" && <Loader />)}

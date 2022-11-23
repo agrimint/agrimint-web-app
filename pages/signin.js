@@ -1,21 +1,25 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Input, Button, Loader, Error } from '../components';
+import { Input, Button, Loader, Error } from '/components';
 import { useSelector, useDispatch } from "react-redux";
-import { setUserSignedIn } from "../redux/userSlice";
+import { onboardingFlow } from "/redux/onboardingSlice";
 import { useRouter } from "next/router";
-import { fetchUserData, signOutUser, signInUser } from "../util/users";
+import { handleUserProgress, signOutUser, signInUser } from "/util/users";
 
 export default function Signin() {
   const { data: session, status } = useSession();
+  const onboardingState = useSelector(state => state.onboarding);
+  const step = useSelector(state => state.onboarding.step);
   const userName = useSelector(state => state.user.name);
   const signedIn = useSelector(state => state.user.signedIn);
+  const userDataFetched = useSelector(state => state.user.userDataFetched);
   const [countryCode, setCountryCode] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [secret, setSecret] = useState("");
   const dispatch = useDispatch();
   const router = useRouter();
   const [error, setError] = useState("");
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -31,21 +35,14 @@ export default function Signin() {
 
   const handleSignOut = async (e) => {
     e.preventDefault();
-    signOutUser(dispatch);
+    setLoggingOut(true);
+    await signOutUser(dispatch);
     router.push("/");
   }
 
   useEffect(() => {
-    if (!signedIn && session) {
-      console.log("Authenticated, SESSION =", session.user);
-      dispatch(setUserSignedIn(session.user.name));
-    }
-
-    if (signedIn && session) {
-      console.log("FETCH", signedIn, session.user);
-      fetchUserData(dispatch, session.user.accessToken, setError);
-    }
-  }, [signedIn, session, dispatch]);
+    if (!loggingOut) handleUserProgress(dispatch, router, session, status, signedIn, userDataFetched, onboardingFlow, onboardingState, step, setError);
+  }, [session, status, signedIn, userDataFetched, step]);
 
   if (session) {
     return (

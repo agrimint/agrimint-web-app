@@ -1,6 +1,6 @@
 import { signIn, signOut } from "next-auth/react";
-import { clearOnboardingData } from "../redux/onboardingSlice";
-import { clearUserData, setCountryCode, setFederations, setPhoneNumber, setUserSignedIn } from "../redux/userSlice";
+import { setStep, clearOnboardingData, setOnboardingComplete } from "../redux/onboardingSlice";
+import { clearUserData, setCountryCode, setPhoneNumber, setFederations, setGuardians, setUserSignedIn, setUserDataFetched } from "../redux/userSlice";
 
 // User utilities
 export const requestOtp = async (name, countryCode, phoneNumber, setError) => {
@@ -106,33 +106,77 @@ export const signUpUser = async (dispatch, name, countryCode, phoneNumber, secre
 
 export const fetchUserData = async (dispatch, accessToken, setError) => {
   try {
+    console.log("=== FETCH USER DATA ===")
     let federations;
 
     // Fetch federation(s)
-    var requestOptions = {
+    let requestOptions = {
       method: "GET",
       cache: "no-cache",
-      credentials: "include",
       headers: new Headers({
         "Authorization": `Bearer ${accessToken}`,
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "http://localhost:4000", // TODO: fix
-        "Access-Control-Allow-Credentials": "true"
       }),
     };
-    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "federations", requestOptions);
+    let res = await fetch(process.env.NEXT_PUBLIC_API_URL + "federations", requestOptions);
     
     if (res) {
       let federations = await res.json();
-      console.log("FEDERATIONS", federations)
-      dispatch(setFederations(federations));
+      console.log("Federations[] length", federations.length);
+
+      if (federations && federations.length > 0) {
+        // TODO: Fetch guardians (& other members)
+        console.log("Fetch guardians");
+
+        let federationId = federations[0].id;
+        federations[0].federationId = federationId;
+        let isFederationActive = federations[0].active;
+        console.log("Federation", federations);
+        dispatch(setFederations(federations));
+
+        requestOptions = {
+          method: "GET",
+          cache: "no-cache",
+          headers: new Headers({
+            "Authorization": `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          }),
+        };
+        res = await fetch(process.env.NEXT_PUBLIC_API_URL + "member/federation/" + federationId, requestOptions);
+
+        if (res) {
+          let guardians = await res.json();
+          console.log("Guardians", guardians);
+          dispatch(setGuardians({ "index": 0, guardians }));
+
+          if (guardians && guardians.length > 0) {
+            if (isFederationActive) {
+              // We're ready
+              console.log("Federation active");
+              dispatch(setOnboardingComplete(true));
+            } else {
+              // Let's monitor
+              console.log("Monitor federation");
+              dispatch(setStep(6));
+            }
+          }
+        } else {
+          // No guardians, go to the invitation step
+          console.log("Time to invite guardians");
+          dispatch(setStep(6));
+        }
+      } else {
+        // Federation is empty, go to the new federation/join federation step
+        console.log("Federation is empty");
+        dispatch(setStep(4));
+      }
+      dispatch(setUserDataFetched(true));
+    } else {
+      setError("An error occurred. Please try again later.")
+      console.error("fetchUserData error");
     }
 
-    if (federations && federations.length > 0) {
-      // TODO: Fetch guardians & other members
-      console.log("Fetch guardians")      
 
-    }
   } catch (e) {
     // TODO: Proper error handling
     setError("An error occurred. Please try again later.")
@@ -141,7 +185,38 @@ export const fetchUserData = async (dispatch, accessToken, setError) => {
 }
 
 export const signOutUser = async (dispatch) => {
+  await signOut({ redirect: false });
   await dispatch(clearUserData());
   await dispatch(clearOnboardingData());
-  await signOut({ redirect: false });
+}
+
+export const handleUserProgress = async (dispatch, router, session, status, signedIn, userDataFetched, onboardingFlow, onboardingState, step, setError) => {
+  if (status === "unauthenticated") {
+    console.log("Not authenticated");
+    // router.push(onboardingFlow[step].stepUrl(onboardingState));
+  } else if (session) {
+    // After the successful sign up & sign in
+    console.log("Authenticated, session user", session.user);
+    if (!signedIn) {
+      console.log("Set signedIn flag");
+      dispatch(setUserSignedIn({ name: session.user.name, countryCode: session.user.countryCode, phoneNumber: session.user.phoneNumber }));
+      // dispatch(nextStep());
+    } else {
+      if (!userDataFetched) {
+        console.log("Fetch user data", signedIn, session.user);
+        fetchUserData(dispatch, session.user.accessToken, setError);
+      } else {
+        // Let's go
+        if (onboardingState.onboardingComplete) {
+          console.log("Push to dashboard");
+          router.push("/dashboard");
+        } else {
+          console.log("Step", step);
+          console.log("Onboarding state", onboardingState);
+          console.log("Push URL", onboardingFlow[step].stepUrl(onboardingState));
+          router.push(onboardingFlow[step].stepUrl(onboardingState));
+        }
+      }
+    }
+  }
 }

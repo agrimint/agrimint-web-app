@@ -1,33 +1,58 @@
-import { Input, Button } from "../../components";
+import { Input, Button, Loader, Error } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
-import { nextStep, setMintName, setMintLocation } from "../../redux/onboardingSlice";
+import { onboardingFlow, nextStep, setMintName } from "../../redux/onboardingSlice";
 import { useRouter } from "next/router";
-import { createFederation } from "../../util/mints";
 import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { createFederation } from "/util/mints";
+import { handleUserProgress } from "/util/users";
 
 export default function SetupMint() {
-  // const step = useSelector(state => state.onboarding.step);
+  const onboardingState = useSelector(state => state.onboarding);
+  const step = useSelector(state => state.onboarding.step);
+  const isNewMint = useSelector(state => state.onboarding.isNewMint);
+  const guardianName = useSelector(state => state.user.name);
   const mintName = useSelector(state => state.onboarding.mintName);
-  // const mintLocation = useSelector(state => state.onboarding.mintLocation);
+  const signedIn = useSelector(state => state.user.signedIn);
+  const userDataFetched = useSelector(state => state.user.userDataFetched);
   const dispatch = useDispatch();
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const [error, setError] = useState("");
+  const [guardianSecret, setGuardianSecret] = useState("");
+  const [guardianSecret2, setGuardianSecret2] = useState("");
 
-  const createMint = async (e) => {
-    // TODO:
-    if (createFederation(dispatch, session.user.accessToken, mintName)) {
+  useEffect(() => {
+    if (!isNewMint) { 
+      router.push("/onboarding/join-mint");
+      return;
+    }
+    else if (status === "unauthenticated") {
+      router.push("/signin");
+      return;
+    } else {
+      handleUserProgress(dispatch, router, session, status, signedIn, userDataFetched, onboardingFlow, onboardingState, step, setError);
+    }
+  }, [session, status, signedIn, userDataFetched, step]);
+
+  const handleCreateMint = async (e) => {
+    e.preventDefault();
+    if (createFederation(dispatch, session.user.accessToken, mintName, guardianName, guardianSecret, setError)) {
+      console.log("Federation created");
       dispatch(nextStep());
-      router.push("/onboarding/guardians");
     }
   }
 
   return(
     <>
+      {(status === "loading" && <Loader />)}
       <h1 className="text-3xl text-center font-bold py-5">Create a mint</h1>
       <p className="pb-5 text-center">Please enter the name of your new mint.</p>
       <Input label="Name" value={mintName} onChange={(e) => dispatch((setMintName(e.target.value)))} />
-      {/* <Input label="Location" value={mintLocation} onChange={(e) => dispatch((setMintLocation(e.target.value)))} /> */}
-      <Button label="Create" disabled={(mintName === '') ? true : false} onClick={(e) => createMint(e)} />
+      <Input label="Choose Guardian secret" type="password" value={guardianSecret} onChange={(e) => setGuardianSecret(e.target.value)} />
+      <Input label="Reenter Guardian secret" type="password" value={guardianSecret2} onChange={(e) => setGuardianSecret2(e.target.value)} />
+      {error !== "" && <Error text={error} />}
+      <Button label="Create" disabled={((mintName === "") || (guardianSecret === "") || (guardianSecret2 === "") || (guardianSecret !== guardianSecret2))} onClick={handleCreateMint} />
     </>
   );
 }

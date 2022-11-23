@@ -4,7 +4,7 @@ export const onboardingFlow = [
   {
     "step": 0,
     "stepName": "Welcome",
-    "stepUrl": "/",
+    "stepUrl": () => "/",
     "canGoBack": false,
     "goBackToUrl": "/",
     "goBackToStep": 0,
@@ -13,7 +13,7 @@ export const onboardingFlow = [
   {
     "step": 1,
     "stepName": "Create account - phone number",
-    "stepUrl": "/onboarding/signup",
+    "stepUrl": () => "/onboarding/signup",
     "canGoBack": true,
     "goBackToUrl": "/",
     "goBackToStep": 0,
@@ -22,7 +22,7 @@ export const onboardingFlow = [
   {
     "step": 2,
     "stepName": "Create account - OTP",
-    "stepUrl": "/onboarding/signup",
+    "stepUrl": () => "/onboarding/signup",
     "canGoBack": true,
     "goBackToUrl": "/",
     "goBackToStep": 0,
@@ -31,7 +31,7 @@ export const onboardingFlow = [
   {
     "step": 3,
     "stepName": "Create account - set PIN",
-    "stepUrl": "/onboarding/signup",
+    "stepUrl": () => "/onboarding/signup",
     "canGoBack": true,
     "goBackToUrl": "/",
     "goBackToStep": 0,
@@ -40,7 +40,7 @@ export const onboardingFlow = [
   {
     "step": 4,
     "stepName": "Account created",
-    "stepUrl": "/onboarding/",
+    "stepUrl": () => "/onboarding",
     "canGoBack": false,
     "goBackUrl": "",
     "goBackToStep": 4,
@@ -48,25 +48,35 @@ export const onboardingFlow = [
   },
   {
     "step": 5,
-    "stepName": "Create a mint",
-    "stepUrl": "/onboarding/new-mint",
+    "stepName": "Create a mint or join a mint",
+    "stepUrl": (onboardingState) => (onboardingState.isNewMint) ? "/onboarding/new-mint" : "/onboarding/join-mint",
     "canGoBack": true,
-    "goBackUrl": "/",
+    "goBackUrl": "/onboarding",
     "goBackToStep": 4,
     "authenticated": true
   },
   {
     "step": 6,
-    "stepName": "Guardian status",
-    "stepUrl": "/onboarding/status",
+    "stepName": "Invite Guardians",
+    "stepUrl": () => "/onboarding/guardians",
     "canGoBack": false,
-    "goBackUrl": "",
-    "goBackToStep": 6,
+    "goBackUrl": "/onboarding",
+    "goBackToStep": 4,
     "authenticated": true
-  }
+  },
+  // {
+  //   "step": 7,
+  //   "stepName": "Mint federation status",
+  //   "stepUrl": "/onboarding/status",
+  //   "canGoBack": false,
+  //   "goBackUrl": "",
+  //   "goBackToStep": 7,
+  //   "authenticated": true
+  // }
 ];
 
 const initialState = {
+  onboardingComplete: false,
   step: 0,
   lastStep: onboardingFlow[onboardingFlow.length - 1].step,
   newUser: {
@@ -75,6 +85,7 @@ const initialState = {
     phoneNumber: "",
     otp: ""
   },
+  createMint: false,
   mintName: "",
   // mintLocation: "",
   invitationCode: "",
@@ -83,25 +94,29 @@ const initialState = {
       id: 0,
       name: "",
       countryCode: "",
-      phoneNumber: ""
+      phoneNumber: "",
+      invitationCode: ""
     },
     {
       id: 1,
       name: "",
       countryCode: "",
-      phoneNumber: ""
+      phoneNumber: "",
+      invitationCode: ""
     },
     {
       id: 2,
       name: "",
       countryCode: "",
-      phoneNumber: ""
+      phoneNumber: "",
+      invitationCode: ""
     },
     {
       id: 3,
       name: "",
       countryCode: "",
-      phoneNumber: ""
+      phoneNumber: "",
+      invitationCode: ""
     }
   ],
 };
@@ -113,6 +128,9 @@ export const onboardingSlice = createSlice({
     nextStep: (state) => {
       state.step += 1;
       if (state.step > state.lastStep) state.step = state.lastStep;
+    },
+    setStep: (state, action) => {
+      state.step = action.payload;
     },
     previousStep: (state) => {
       if (onboardingFlow[state.step].canGoBack) {
@@ -127,7 +145,7 @@ export const onboardingSlice = createSlice({
       }
     },
     clearOnboardingData: () => {
-      storage.removeItem("persist:root");
+      window.localStorage.removeItem("persist:root");
       console.log("Cleared onboarding data");
       return initialState;
     },
@@ -142,6 +160,9 @@ export const onboardingSlice = createSlice({
     },
     setNewUserOtp: (state, action) => {
       state.newUser.otp = action.payload;
+    },
+    setNewMint: (state, action) => {
+      state.isNewMint = action.payload;
     },
     setMintName: (state, action) => {
       state.mintName = action.payload;
@@ -158,22 +179,32 @@ export const onboardingSlice = createSlice({
     setGuardianPhoneNumber: (state, action) => {
       if (action.payload.index <= (state.guardians.length - 1)) state.guardians[action.payload.index].phoneNumber = action.payload.phoneNumber;
     },
+    setGuardianInvitationCode: (state, action) => {
+      if (action.payload.index <= (state.guardians.length - 1)) state.guardians[action.payload.index].invitationCode = action.payload.invitationCode;
+    },
+    setOnboardingComplete: (state, action) => {
+      state.onboardingComplete = action.payload;
+    },
   }
 });
 
 export const { 
   nextStep,
+  setStep,
   previousStep,
   setNewUserName,
   setNewUserCountryCode,
   setNewUserPhoneNumber,
   setNewUserOtp,
   clearOnboardingData,
+  setNewMint,
   setMintName,
   setInvitationCode,
   setGuardianName,
   setGuardianCountryCode,
   setGuardianPhoneNumber,
+  setGuardianInvitationCode,
+  setOnboardingComplete
 } = onboardingSlice.actions;
 
 export default onboardingSlice.reducer;
