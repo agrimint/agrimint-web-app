@@ -42,6 +42,9 @@ export const userSlice = createSlice({
     setGuardians: (state, action) => {
       state.federations[action.payload.index].guardians = action.payload.guardians;
     },
+    setMembers: (state, action) => {
+      state.federations[action.payload.index].members = action.payload.members;
+    },
   }
 
 });
@@ -55,6 +58,7 @@ export const {
   clearUserData,
   setFederations,
   setGuardians,
+  setMembers,
 } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -1,6 +1,6 @@
 import { signIn, signOut } from "next-auth/react";
 import { setStep, clearOnboardingData, setOnboardingComplete } from "../redux/onboardingSlice";
-import { clearUserData, setCountryCode, setPhoneNumber, setFederations, setGuardians, setUserSignedIn, setUserDataFetched } from "../redux/userSlice";
+import { clearUserData, setCountryCode, setPhoneNumber, setFederations, setGuardians, setMembers, setUserSignedIn, setUserDataFetched } from "../redux/userSlice";
 
 // User utilities
 export const requestOtp = async (name, countryCode, phoneNumber, setError) => {
@@ -145,9 +145,13 @@ export const fetchUserData = async (dispatch, accessToken, setError) => {
         res = await fetch(process.env.NEXT_PUBLIC_API_URL + "member/federation/" + federationId, requestOptions);
 
         if (res) {
-          let guardians = await res.json();
+          let allMembers = await res.json();
+          let guardians = allMembers.filter(guardian => guardian.guardian)
           console.log("Guardians", guardians);
           dispatch(setGuardians({ "index": 0, guardians }));
+          let members = allMembers.filter(member => !(member.guardian))
+          console.log("Members", members);
+          dispatch(setMembers({ "index": 0, members }));
 
           if (guardians && guardians.length > 0) {
             if (isFederationActive) {

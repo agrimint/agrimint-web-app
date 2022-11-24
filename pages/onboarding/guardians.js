@@ -70,10 +70,11 @@ export default function InviteGuardians() {
 
   return (
     <>
-      {<Confetti recycle={false} />}
+      {(remainingGuardians === 0) && <Confetti recycle={false} />}
       {(status === "loading") && <Loader />}
-      <h1 className="text-3xl text-center font-bold py-5">{remainingGuardians === 0 ? "You are ready!" : "Invite Guardians"}</h1>
-      <p className="pb-5 text-center">You need {remainingGuardians} guardians more out of {guardians.length} in total.</p>
+      <h1 className="text-3xl text-center font-bold py-5">{(remainingGuardians === 0) ? "You are ready!" : "Invite Guardians"}</h1>
+      {(remainingGuardians > 0) && <p className="pb-5 text-center">You need {remainingGuardians} guardians more out of {guardians.length} in total.</p>}
+      {(remainingGuardians === 0) && <Loader inline={true} text="Preparing the federation" />}
       {error && <Error text={error} />}
       {guardiansJoined?.map((s, i) => (
         <div key={i} className="flex w-full rounded-[6px] border border-gray-300 bg-white p-4 mb-4">
@@ -81,25 +82,24 @@ export default function InviteGuardians() {
             <h2 className="text-lg font-bold py-1">{guardiansJoined[i].name} {((guardiansJoined[i].countryCode === countryCode) && (guardiansJoined[i].phoneNumber === phoneNumber)) && '(You)'}</h2>
             <p className="text-gray-500">+{guardiansJoined[i].countryCode} {guardiansJoined[i].phoneNumber}</p>
           </div>
-          <svg className="flex my-auto" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg className="ml-auto my-auto" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="40" height="40" rx="20" fill="#0D9488" />
             <path d="M26.6663 15L17.4997 24.1667L13.333 20" stroke="white" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>      
       ))}
       {guardians.map((s, i) => {
-          // console.log(i);
-          if (i > (guardians.length - remainingGuardians - 1)) return (<div key={i}>
-            <div key={i} className="w-full rounded-[6px] border border-gray-300 bg-white p-4 mb-4">
-              <h2 className="text-lg font-bold py-1">Invite Guardian {i + 1}</h2>
-              {/* <Input label="Name" value={guardians[i].name} onChange={(e) => dispatch((setGuardianName({ index: i, name: e.target.value })))} /> */}
-              <Input label="Country code" value={guardians[i].countryCode} onChange={(e) => dispatch((setGuardianCountryCode({ index: i, countryCode: e.target.value })))} />
-              <Input label="Phone number" value={guardians[i].phoneNumber} onChange={(e) => dispatch((setGuardianPhoneNumber({ index: i, phoneNumber: e.target.value })))} />
-              {guardians[i].invitationCode && <Info text={"Invitation code sent successfully: " + guardians[i].invitationCode} />}
-              {errors[i] && <Error text={errors[i]} />}
-              <Button label="Send invite" disabled={(guardians[i].countryCode === '') || (guardians[i].phoneNumber === '')} onClick={(e) => handleSendInvite(e, i)} />
-            </div>
-          </div>)
+        if (i > (guardians.length - remainingGuardians - 1)) return (<div key={i}>
+          <div key={i} className="w-full rounded-[6px] border border-gray-300 bg-white p-4 mb-4">
+            <h2 className="text-lg font-bold py-1">Invite Guardian {i + 1}</h2>
+            {/* <Input label="Name" value={guardians[i].name} onChange={(e) => dispatch((setGuardianName({ index: i, name: e.target.value })))} /> */}
+            <Input label="Country code" value={guardians[i].countryCode} onChange={(e) => dispatch((setGuardianCountryCode({ index: i, countryCode: e.target.value })))} />
+            <Input label="Phone number" value={guardians[i].phoneNumber} onChange={(e) => dispatch((setGuardianPhoneNumber({ index: i, phoneNumber: e.target.value })))} />
+            {guardians[i].invitationCode && <Info text={"Invitation code sent successfully: " + guardians[i].invitationCode} />}
+            {errors[i] && <Error text={errors[i]} />}
+            <Button label="Send invite" disabled={(guardians[i].countryCode === '') || (guardians[i].phoneNumber === '')} onClick={(e) => handleSendInvite(e, i)} />
+          </div>
+        </div>)
       })}
       <div className="pb-8">
         <Button onClick={handleSignOut} label="Sign out" intent="secondary" />

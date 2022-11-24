@@ -47,12 +47,13 @@ export default function Signin() {
   if (session) {
     return (
       <>
-        {(status === "loading") && <Loader />}
+        <Loader />
+        {/* {(status === "loading") && <Loader />}
         <h1 className="text-3xl text-center font-bold py-5">User profile</h1>
         <p className="pb-5 text-center">Signed in as {userName}</p>
         <div className="mt-auto pb-5">
           <Button onClick={handleSignOut} label="Sign out" intent="primary" />
-        </div>
+        </div> */}
       </>
     );
   }

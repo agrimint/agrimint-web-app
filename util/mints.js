@@ -89,8 +89,6 @@ export const inviteGuardian = async (dispatch, accessToken, federationId, index,
     };
     const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "invite", requestOptions);
     
-    // console.log("BLAH");
-    // TODO: Check res code
     if (res && res.status === 200) {
       let invite = await res.json();
       console.log("Guardian invited", invite);
@@ -157,5 +155,42 @@ export const joinFederation = async (dispatch, accessToken, guardianName, guardi
     console.error("joinFederation error", e);
     setError("Could not join the mind. Please check your invitation code.");
     return false;
+  }
+}
+
+export const inviteMember = async (accessToken, federationId, countryCode, phoneNumber, setError) => {
+  try {
+    // Invite a guardian
+    var requestOptions = {
+      method: "POST",
+      cache: "no-cache",
+      headers: new Headers({
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      }),
+      body: JSON.stringify({
+        "phoneNumber": phoneNumber,
+        "countryCode": countryCode,
+        "federationId": federationId
+      })
+    };
+    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "invite", requestOptions);
+    
+    if (res && res.status === 200) {
+      let invite = await res.json();
+      console.log("Member invited", invite);
+      setError("");
+
+      return invite.invitationCode;
+    } else {
+      console.error("inviteGuardian error");
+      setError("An error occurred while trying to invite member. Please try again later.");
+      return null;
+    }
+  } catch (e) {
+    // TODO: Proper error handling
+    console.error("inviteGuardian error", e);
+    setError("An error occurred while trying to invite member. Please try again later.");
+    return null;
   }
 }
