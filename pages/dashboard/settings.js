@@ -11,9 +11,10 @@ export default function Vault() {
   const userName = useSelector(state => state.user.name);
   const countryCode = useSelector(state => state.user.countryCode);
   const phoneNumber = useSelector(state => state.user.phoneNumber);
+  const mintName = useSelector(state => state.user.federations ? state.user.federations[0]?.name : "");
+  const guardians = useSelector(state => state.user.federations ? state.user.federations[0]?.guardians : []);
   // const [loggingOut, setLoggingOut] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const guardians = useSelector(state => state.user.federations ? state.user.federations[0]?.guardians : []);
   const { data: session, status } = useSession();
   const [error, setError] = useState("");
 
@@ -35,7 +36,7 @@ export default function Vault() {
     <>
       {isLoading && <Loader />}
       <h1 className="text-3xl text-center font-bold py-5">Settings</h1>
-      <p className="text-center pb-5">{userName}, welcome to AgriMint!</p>
+      <p className="text-center text-lg pb-5 text-orange-600 font-bold">{mintName}</p>
       <p className="pb-5 text-center">There are currently {guardians?.length} guardians for the mint.</p>
       {error && <Error text={error} />}
       {guardians?.map((s, i) => (

@@ -34,7 +34,7 @@ export default function Home() {
     return (
       <>
         {(status === "loading") && <Loader />}
-        <Image src="/agrimint-logo-vector.svg" alt="AgriMint logo" width="10" height="10" className="w-20 h-20 mx-auto my-10" />
+        <Image src="/agrimint-logo-vector.svg" alt="AgriMint logo" width="10" height="10" className="w-24 h-24 mx-auto my-10" />
         <h1 className="text-3xl font-bold py-5 text-center">Welcome to AgriMint!</h1>
         <p className="pb-5 text-center">AgriMint enables you to create a mint – your community-owned bank where you can securely save money, pay, borrow and protect against surprising events, together with other members.</p>
         <div className="mt-auto pb-10">
