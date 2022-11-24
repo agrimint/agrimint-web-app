@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import { SessionProvider } from "next-auth/react";
-import { PageHead, Layout, OnboardingHeader } from "../components";
+import { PageHead, Layout, OnboardingHeader, BottomNavigation } from "../components";
 // import { NextIntlProvider } from "next-intl";
 import { store } from "../redux/store";
 import { Provider } from "react-redux";
@@ -28,6 +28,7 @@ function App({
               {router.pathname.startsWith('/onboarding') && <OnboardingHeader />}
               <Component {...pageProps} />
             </Layout>
+            {router.pathname.startsWith('/dashboard') && <BottomNavigation activeTab={router.pathname.split("/").pop()} />}
           </SessionProvider>
         </PersistGate>
       </Provider>

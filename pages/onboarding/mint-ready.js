@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
-export default function MintStatus() {
+export default function MintReady() {
   const onboardingState = useSelector(state => state.onboarding);
   const step = useSelector(state => state.onboarding.step);
   const mintName = useSelector(state => state.onboarding.mintName);

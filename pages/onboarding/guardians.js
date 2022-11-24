@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { handleUserProgress, signOutUser } from "../../util/users";
+import Confetti from 'react-confetti';
 
 export default function InviteGuardians() {
   const guardians = useSelector(state => state.onboarding.guardians);
@@ -38,11 +39,10 @@ export default function InviteGuardians() {
 
     // Refetch once
     if (userDataFetched && refetch) {
-      console.log("REFETCHING")
+      console.log("Refetching")
       dispatch(setUserDataFetched(false));
       setRefetch(false);
     }
-
   }, [session, status, signedIn, userDataFetched, step]);
 
   const handleSignOut = async (e) => {
@@ -68,10 +68,11 @@ export default function InviteGuardians() {
     if (remainingGuardians < 0) remainingGuardians = 0;
   }
 
-  return(
+  return (
     <>
+      {<Confetti recycle={false} />}
       {(status === "loading") && <Loader />}
-      <h1 className="text-3xl text-center font-bold py-5">Invite Guardians</h1>
+      <h1 className="text-3xl text-center font-bold py-5">{remainingGuardians === 0 ? "You are ready!" : "Invite Guardians"}</h1>
       <p className="pb-5 text-center">You need {remainingGuardians} guardians more out of {guardians.length} in total.</p>
       {error && <Error text={error} />}
       {guardiansJoined?.map((s, i) => (

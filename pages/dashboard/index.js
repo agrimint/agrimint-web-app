@@ -1,11 +1,12 @@
 import { useSession } from "next-auth/react";
-import { Button, Loader } from '../../components';
+import { BottomNavigation, Button, Loader } from '../../components';
 import { useRouter } from "next/router";
 import { onboardingFlow } from "/redux/onboardingSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { signOutUser } from "/util/users";
 import { useState, useEffect } from "react";
 import { handleUserProgress } from "/util/users";
+// import Confetti from 'react-confetti';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -28,21 +29,19 @@ export default function Dashboard() {
     }
   }, [session, status, signedIn, userDataFetched, step]);
 
-  const handleSignOut = async (e) => {
-    e.preventDefault();
-    setLoggingOut(true);
-    await signOutUser(dispatch);
-    router.push("/");
-  }
+  // const handleSignOut = async (e) => {
+  //   e.preventDefault();
+  //   setLoggingOut(true);
+  //   await signOutUser(dispatch);
+  //   router.push("/");
+  // }
 
   return (
     <>
+      {/* <Confetti recycle={false} /> */}
       {(status === "loading") && <Loader />}
       <h1 className="text-3xl text-center font-bold py-5">Dashboard</h1>
       <p className="text-center pb-5">{userName}, welcome to AgriMint!</p>
-      <div className="container mt-auto mx-auto bottom-2">
-        <Button onClick={handleSignOut} label="Sign out" intent="primary" />
-      </div>
     </>
   );
 }
