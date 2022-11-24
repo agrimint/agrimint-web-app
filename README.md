@@ -2,7 +2,7 @@
 
 (c) AgriMint team, created during the BOLT.FUN Legends of Lightning Tournament.
 
-Current version: 0.1, November 2022.
+Current version: 0.1 (Alpha release), 24 November 2022.
 
 ## Overview
 
@@ -14,16 +14,17 @@ This web application provides a user-friendly access of Guardians and Members to
 - Creating a new federation and inviting other Guardians.
 - Accepting an invitation as a Guardian to complete the initial federation setup.
 - Inviting other Members.
-- Dashboard with overview of the personal balances in sats
-- Depositing by paying a Lightning invoice.
-- Payments to other Members
-- Payments of Lightning invoices.
+- Payments to other Members.
+- Dashboard with mock data due to some limitations for Guardian mint wallets.
 
 The app is built using Next.js and React.
 
 ## Roadmap
 
 The following features are part of the roadmap:
+- Fully functional dashboard with overview of the personal balances in sats.
+- Depositing by paying a Lightning invoice.
+- Payments of Lightning invoices.
 - Support for US dollars using an integration with [Stablesats](https://stablesats.com/).
 - Lending to other members.
 - Building a credit record and borrowing with fair conditions from external lenders, using an integration with the [Growr protocol](https://growr.xyz/protocol).
