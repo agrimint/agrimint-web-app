@@ -24,11 +24,11 @@ function App({
         <PersistGate loading={null} persistor={persistor}>
           <SessionProvider session={session}>
             <PageHead />
-            <Layout>
-              {router.pathname.startsWith('/onboarding') && <OnboardingHeader />}
+            <Layout padding={router.pathname !== "/dashboard"}>
+              {router.pathname.startsWith("/onboarding") && <OnboardingHeader />}
               <Component {...pageProps} />
             </Layout>
-            {router.pathname.startsWith('/dashboard') && <BottomNavigation activeTab={router.pathname.split("/").pop()} />}
+            {router.pathname.startsWith("/dashboard") && <BottomNavigation activeTab={router.pathname.split("/").pop()} />}
           </SessionProvider>
         </PersistGate>
       </Provider>
