@@ -42,7 +42,8 @@ export default function Members() {
 
     // Refetch once
     if (session && refetch) {
-      console.log("REFETCHING")
+      console.log("REFETCHING");
+      dispatch(setUserDataFetched(false));
       fetchUserData(dispatch, session.user.accessToken, setError);
       setRefetch(false);
     }
@@ -62,7 +63,7 @@ export default function Members() {
 
   return(
     <>
-      {(status === "loading") && <Loader />}
+      {((status === "loading") || (!userDataFetched)) && <Loader />}
       <div className="pb-20">
         <h1 className="text-3xl text-center font-bold py-5">Members</h1>
         <div className="w-full rounded-[6px] border border-gray-300 bg-white p-4 mb-4">

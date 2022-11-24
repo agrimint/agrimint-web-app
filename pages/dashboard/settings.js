@@ -36,7 +36,7 @@ export default function Vault() {
     <>
       {isLoading && <Loader />}
       <h1 className="text-3xl text-center font-bold py-5">Settings</h1>
-      <p className="text-center text-lg pb-5 text-orange-600 font-bold">{mintName}</p>
+      <p className="text-center text-lg pb-5 text-teal-600 font-bold">{mintName}</p>
       <p className="pb-5 text-center">There are currently {guardians?.length} guardians for the mint.</p>
       {error && <Error text={error} />}
       {guardians?.map((s, i) => (
