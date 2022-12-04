@@ -19,6 +19,15 @@ This web application provides a user-friendly access of Guardians and Members to
 
 The app is built using Next.js and React.
 
+## Setup
+
+- Clone repo
+- Install packages
+`$ npm install`
+- Run dev
+`$ npm run dev`
+
+
 ## Roadmap
 
 The following features are part of the roadmap:
