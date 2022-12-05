@@ -22,14 +22,14 @@ export default function Dashboard() {
   const [error, setError] = useState("");
   const [loggingOut, setLoggingOut] = useState(false);
 
-  // useEffect(() => {
-  //   if (status === "unauthenticated") {
-  //     router.push("/signin");
-  //     return;
-  //   } else if (!loggingOut) {
-  //     handleUserProgress(dispatch, router, session, status, signedIn, userDataFetched, onboardingFlow, onboardingState, step, setError);
-  //   }
-  // }, [session, status, signedIn, userDataFetched, step]);
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/signin");
+      return;
+    } else if (!loggingOut) {
+      handleUserProgress(dispatch, router, session, status, signedIn, userDataFetched, onboardingFlow, onboardingState, step, setError);
+    }
+  }, [session, status, signedIn, userDataFetched, step]);
 
   // Mock data!
   const accounts = [
