@@ -73,8 +73,7 @@ export default function Vault() {
   
   return (
     <>
-      {isLoading ? <Loader /> :
-      <div className="px-2 py-8 pb-20">
+      {isLoading ? <Loader /> : <div className="px-2 py-8 pb-20">
         <h1 className="text-3xl font-semibold">Profile & Settings</h1>
         <h2 className="text-xl py-5 font-semibold">My credentials</h2>
         {credentials.map((credential, i) => <div key={i} className={`w-full flex text-gray-500 py-4 ${(i < credentials.length - 1) && "border-b border-gray-200"}`}>
