@@ -12,7 +12,7 @@ export default function Send() {
   return (
     <>
       <div className="absolute top-4 left-4">
-        <IconButton iconName="<" onClick={handleBackClick} />
+        <IconButton iconName="<-" onClick={handleBackClick} />
       </div>
       <h1 className="text-3xl text-center font-bold py-5">Send</h1>
     </>

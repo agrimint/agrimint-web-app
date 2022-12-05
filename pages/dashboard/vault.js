@@ -1,5 +1,7 @@
 export default function Vault() {
   return (
-    <h1 className="text-3xl text-center font-bold py-5">Vault</h1>
+    <div className="px-2 py-8">
+      <h1 className="text-3xl font-semibold">Vault</h1>
+    </div>
   );
 }

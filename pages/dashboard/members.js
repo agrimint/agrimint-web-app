@@ -21,7 +21,7 @@ export default function Members() {
   const countryCode = useSelector(state => state.user.countryCode);
   const phoneNumber = useSelector(state => state.user.phoneNumber);
   const dispatch = useDispatch();
-  // const router = useRouter();
+  const router = useRouter();
   const { data: session, status } = useSession();
   const [error, setError] = useState("");
   const [newMemberCountryCode, setNewMemberCountryCode] = useState("");
@@ -36,9 +36,6 @@ export default function Members() {
       router.push("/signin");
       return;
     } 
-    // else {
-    //   if (!loggingOut) handleUserProgress(dispatch, router, session, status, signedIn, userDataFetched, onboardingFlow, onboardingState, step, setError);
-    // }
 
     // Refetch once
     if (session && refetch) {
@@ -64,8 +61,8 @@ export default function Members() {
   return(
     <>
       {((status === "loading") || (!userDataFetched)) && <Loader />}
-      <div className="pb-20">
-        <h1 className="text-3xl text-center font-bold py-5">Members</h1>
+      <div className="px-2 py-8 pb-20">
+        <h1 className="text-3xl font-semibold">Members</h1>
         <div className="w-full rounded-[6px] border border-gray-300 bg-white p-4 mb-4">
           <h2 className="text-lg font-bold py-1">Invite a new member</h2>
           <Input label="Country code" value={newMemberCountryCode} onChange={(e) => setNewMemberCountryCode(e.target.value)} />

@@ -44,7 +44,6 @@ const BottomNavigation = ({ activeTab = "dashboard" }) => {
     <nav className="fixed bottom-0 z-50 flex w-full overflow-x-auto border bg-white">
       {items?.map((item, i) => {
         const Icon = item.svg;
-        console.log("item", item);
         return (<Link key={i} href={item.url} className={`whitespace-no-wrap flex flex-1 flex-grow flex-col items-center justify-center overflow-hidden py-2 text-sm ${(activeTab === item.tab) ? `text-teal-600` : `text-gray-400`} transition-colors duration-100 ease-in-out hover:bg-gray-200 ${(activeTab === item.tab) ? `focus:text-teal-600` : `focus:text-gray-400`}`}>
           <Icon activeTab={activeTab} />          
           <span className="text-sm capitalize">{item.label}</span>
