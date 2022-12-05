@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { IconButton } from "../../components";
 import { useRouter } from "next/router";
-import { projects, formatCurrency, formatPercentage } from "./data";
+import { projects, formatCurrency, formatPercentage } from "../../util/data";
 
 export default function Projects() {
   const router = useRouter();

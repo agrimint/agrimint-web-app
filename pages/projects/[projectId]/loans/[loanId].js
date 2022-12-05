@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Loader, IconButton } from "../../../../components";
 import { useRouter } from "next/router";
-import { projects, formatCurrency, formatPercentage, formatDate } from "../../data";
+import { projects, formatCurrency, formatPercentage, formatDate } from "../../../../util/data";
 
 export default function Loan() {
   const router = useRouter();

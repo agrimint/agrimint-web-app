@@ -1,6 +1,6 @@
 import { Loader } from "../../components";
 import Link from "next/link";
-import { projects, formatCurrency, formatPercentage } from "../projects/data";
+import { projects, formatCurrency, formatPercentage } from "../../util/data";
 
 export default function Loans() {
   let eligibleProjects = [];

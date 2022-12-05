@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Button, Checkbox, IconButton, Loader } from "../../../components";
-import { projects, formatCurrency, formatPercentage } from '../data';
+import { projects, formatCurrency, formatPercentage } from '../../../util/data';
 
 export default function Project() {
   const router = useRouter();
