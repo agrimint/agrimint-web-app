@@ -7,7 +7,7 @@ export default function Loans() {
   let currentLoans = [];
   projects.forEach(project => {
     if (project.status === "eligible") eligibleProjects.push(project);
-    if (project.status === "disbursed") project.loans.forEach(loan => currentLoans.push({...loan, projectId: project._id}));
+    if (project.status === "disbursed") project.loans.forEach(loan => currentLoans.push({...loan, projectId: project._id, projectTitle: project.title}));
   });
   // console.log(eligibleProjects);
   // console.log(currentLoans);
@@ -36,8 +36,8 @@ export default function Loans() {
       
       {currentLoans?.map((loan, i) => <Link key={i} href={`/projects/${loan.projectId}/loans/${loan._id}`}>
         <div className="w-auto px-4 py-5 mb-4 flex flex-col rounded-lg bg-white shadow">
-          <h3 className="text-xl font-bold">Fertilizers for season 2022</h3>
-          <p className="text-gray-500 mb-5">Due in 30 days</p>
+          <h3 className="text-xl font-bold">{loan.projectTitle}</h3>
+          <p className="text-gray-500 mb-5">Due in {Math.round((new Date(loan.endDate) / (24 * 3600 * 1000)) - (new Date() / (24 * 3600 * 1000)))} days</p>
           <div className="grid grid-cols-3">
             <div>
               <p className="text-gray-500">Total due</p>
